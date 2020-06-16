@@ -34,7 +34,7 @@ if ($PSBoundParameters.ContainsKey('Build')) {
   & $Base_Dir\Resources\Scripts\Build-Homelab.ps1
 } elseif ($PSBoundParameters.ContainsKey('Start')) {
   Write-Host "[Starting up Lab] Copying files to LabSource"
-  Copy-Item -Path $Base_Dir\Resources\PostInstallationActiveties\ -Destination C:\LabSources\PostInstallationActiveties\ -Recurse -Force
+  Copy-Item -Path $Base_Dir\Resources\PostInstallationActiveties\DetectionLab -Destination C:\LabSources\PostInstallationActivities -Recurse -Force
   Copy-Item -Path $Base_Dir\Resources\Software\* -Destination C:\LabSources\Software\ -Recurse -Force
   & $Base_Dir\Resources\Scripts\Start-Homelab.ps1 -Labname $LabName
 } elseif ($PSBoundParameters.ContainsKey('Delete')) {

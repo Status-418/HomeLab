@@ -6,14 +6,14 @@
 #>
 
 Write-Host "[Configure RDP GPO] Downloading and unpackign the GPOs"
-Invoke-WebRequest -Uri 'https://github.com/Status-418/HomeLab/raw/v03/Resources/GPOs/Allow%20RDP%20Access.zip' -OutFile 'C:\Windows\Temp\Allow_RDP_Access.zip'
+Invoke-WebRequest -Uri 'https://github.com/Status-418/HomeLab/raw/master/Resources/GPOs/Allow%20RDP%20Access.zip' -OutFile 'C:\Windows\Temp\Allow_RDP_Access.zip'
 Expand-Archive -Path 'C:\Windows\Temp\Allow_RDP_Access.zip' -DestinationPath 'C:\Windows\Temp\Allow_RDP_Access'
 
 Write-Host "[Configure RDP GPO] Importing the GPO to allow users to RDP..."
-Import-GPO -BackupGpoName 'Allow Domain Users RDP' -Path "c:\windows\temp\GPO\Allow_RDP_Access" -TargetName 'Allow Domain Users RDP' -CreateIfNeeded
+Import-GPO -BackupGpoName 'Allow RDP Access' -Path "C:\Windows\Temp\Allow_RDP_Access\" -TargetName 'Allow Domain Users RDP' -CreateIfNeeded
 
 Write-Host "[Configure RDP GPO] Linking the GPO to the Client OU"
-$OU = "ou=Workstations,dc=lab,dc=local"
+$OU = "ou=Computers,ou=detectionlab,dc=lab,dc=local"
 $gPLinks = $null
 $gPLinks = Get-ADOrganizationalUnit -Identity $OU -Properties name,distinguishedName, gPLink, gPOptions
 $GPO = Get-GPO -Name 'Allow Domain Users RDP'
@@ -28,7 +28,7 @@ else
 }
 
 Write-Host "[Configure RDP GPO] Linking the GPO to the Server OU"
-$OU = "ou=Servers,dc=lab,dc=local"
+$OU = "ou=Servers,ou=detectionlab,dc=lab,dc=local"
 $gPLinks = $null
 $gPLinks = Get-ADOrganizationalUnit -Identity $OU -Properties name,distinguishedName, gPLink, gPOptions
 $GPO = Get-GPO -Name 'Allow Domain Users RDP'
