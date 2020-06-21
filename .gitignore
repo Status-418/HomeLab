@@ -1,4 +1,4 @@
 Resources/Software/*.ISO
 Resources/Software/*.msi
 Resources/Software/*.exe
-Resources/PostInstallationActiveties/*.xml
+Resources/PostInstallationActiveties/DetectionLab/*.xml
