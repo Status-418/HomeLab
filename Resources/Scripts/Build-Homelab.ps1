@@ -21,7 +21,7 @@ Copy-Item -Path .\Resources\PostInstallationActiveties\PostInstallServer\ -Desti
 Copy-Item -Path .\Resources\Software\ -Destination C:\LabSources\Software\ -Recurse
 
 Write-Host "[Build] Checking if there is a Server ISO file" -ForegroundColor Green
-if (!not(Test-Path -Path C:\LabSources\ISOs\Windows_Server_2019.iso)) {
+if (-not(Test-Path -Path C:\LabSources\ISOs\Windows_Server_2019.iso)) {
     $downloadServerIso = Read-Host 'Do you want to download ISO images?'
     switch ($downloadServerIso) {
         Yes {$downloadServerIso = $true; break}
@@ -35,7 +35,7 @@ if (!not(Test-Path -Path C:\LabSources\ISOs\Windows_Server_2019.iso)) {
     }
 
 Write-Host "[Build] Checking if there is a Client ISO file" -ForegroundColor Green
-if (!not(Test-Path -Path C:\LabSources\ISOs\Windows_10.iso)) {
+if (-not(Test-Path -Path C:\LabSources\ISOs\Windows_10.iso)) {
     $downloadClientIso = Read-Host 'Do you want to download ISO images?'
     switch ($downloadClientIso) {
         Yes {$downloadClientIso = $true; break}

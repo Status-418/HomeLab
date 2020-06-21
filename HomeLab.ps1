@@ -34,9 +34,11 @@ if ($PSBoundParameters.ContainsKey('Build')) {
   & $Base_Dir\Resources\Scripts\Build-Homelab.ps1
 } elseif ($PSBoundParameters.ContainsKey('Start')) {
   Write-Host "[Starting up Lab] Copying files to LabSource"
-  Copy-Item -Path $Base_Dir\Resources\PostInstallationActiveties\DetectionLab -Destination C:\LabSources\PostInstallationActivities -Recurse -Force
-  Copy-Item -Path $Base_Dir\Resources\Software\* -Destination C:\LabSources\Software\ -Recurse -Force
+  Copy-Item -Path "$Base_Dir\Resources\PostInstallationActiveties\DetectionLab\" -Destination "C:\LabSources\PostInstallationActivities\" -Recurse -Force
+  Copy-Item -Path "$Base_Dir\Resources\Software\" -Destination "C:\LabSources\" -Recurse -Force
   & $Base_Dir\Resources\Scripts\Start-Homelab.ps1 -Labname $LabName
+  Disable-LabAutoLogon
+  Copy-LabFileItem -Path "$Base_Dir\Resources\Scripts\Lab-Tools\" -DestinationFolderPath "C:\Program Files\WindowsPowerShell\Modules\" -ComputerName (Get-LabVm).name -Recurse
 } elseif ($PSBoundParameters.ContainsKey('Delete')) {
   Remove-Lab -Name $LabName
 } elseif ($PSBoundParameters.ContainsKey('Snapshot')) {
