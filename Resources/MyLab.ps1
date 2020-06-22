@@ -21,20 +21,22 @@ Set-LabInstallationCredential -Username Administrator -Password StickyPot6
 Add-LabVirtualNetworkDefinition -Name $Labname
 Add-LabVirtualNetworkDefinition -Name 'Internet' -HyperVProperties @{ SwitchType = 'External'; AdapterName = 'Ethernet' }
 
-
+# Domain Controlled definition
 $postInstallActivity_Servers = @()
 $postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Configure-Server.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
 $postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Install-Choco-Apps-Server.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
 $postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Configure-RDP-User-GPO.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab\
 $postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Configure-Local-Admin.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab\
 $postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Set_Audit_Pol_PS_v2_3_4_5.cmd -DependencyFolder $labSources\PostInstallationActivities\DetectionLab\
-Add-LabMachineDefinition -Name DC1 -Memory 4GB -OperatingSystem 'Windows Server 2019 Standard Evaluation (Desktop Experience)' -Roles RootDC -Network $Labname -DomainName lab.local -IpAddress 192.168.11.1 -PostInstallationActivity  $postInstallActivity_Servers
+Add-LabMachineDefinition -Name DC1 -Memory 1GB -OperatingSystem 'Windows Server 2019 Standard Evaluation (Desktop Experience)' -Roles RootDC -Network $Labname -DomainName lab.local -IpAddress 192.168.11.1 -PostInstallationActivity  $postInstallActivity_Servers
 
+# Server definition used as a routerh to the internet
 $netAdapter = @()
 $netAdapter += New-LabNetworkAdapterDefinition -VirtualSwitch $Labname -Ipv4Address 192.168.11.254 
 $netAdapter += New-LabNetworkAdapterDefinition -VirtualSwitch 'Internet' -UseDhcp
 Add-LabMachineDefinition -Name Router1 -Memory 1GB -OperatingSystem 'Windows Server 2019 Standard Evaluation (Desktop Experience)' -Roles Routing -NetworkAdapter $netAdapter -DomainName lab.local 
 
+# Client definitions
 $postInstallActivity_Clients = @()
 $postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Remove-OneDrive.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
 $postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Remove-Default-Apps.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
@@ -42,17 +44,28 @@ $postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName 
 $postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Install-Choco-Apps.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
 $postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Set_Audit_Pol_PS_v2_3_4_5.cmd -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
 $postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Install-Winlogbeat.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
-Add-LabMachineDefinition -Name Client1 -Memory 4GB -Network $Labname -OperatingSystem 'Windows 10 Enterprise Evaluation' -Roles Office2013 -DomainName lab.local -IpAddress 192.168.11.101 -PostInstallationActivity $postInstallActivity_Clients
+Add-LabMachineDefinition -Name Client1 -Memory 2GB -Network $Labname -OperatingSystem 'Windows 10 Enterprise Evaluation' -Roles Office2013 -DomainName lab.local -IpAddress 192.168.11.101 -PostInstallationActivity $postInstallActivity_Clients
 
-Add-LabIsoImageDefinition -Name Office2013 -Path  $labSources\Software\Office_2013.iso
+# Aditinal resources for the Client Inastallation
+Add-LabIsoImageDefinition -Name Office2013 -Path  "$labSources\Software\Office 2013.iso"
 
+# Installation of the Lab
 Install-Lab
 
+#Disabling of Lab Auto Logon
 Disable-LabAutoLogon
+
+# Copying Powershell module to all computers to facilitate the common tasks
+Copy-LabFileItem -Path "$Base_Dir\Resources\Scripts\Lab-Tools\" -DestinationFolderPath "C:\Program Files\WindowsPowerShell\Modules\" -ComputerName (Get-LabVm).name -Recurse
+
+# Taking a Snapshot of all computer
 Checkpoint-LabVM -SnapshotName Baseline -All
 
+# Commands used to install an applicaion post install on all computers quitetly
 #$packs = @()
 #$packs += Get-LabSoftwarePackage -Path $labSources\Software\kolide-launcher.msi -CommandLine -quiet
 #Install-LabSoftwarePackages -Machine (Get-LabVM -All) -SoftwarePackage $packs
 
+# Displaying Lab Deployment Summary
 Show-LabDeploymentSummary -Detailed
+
