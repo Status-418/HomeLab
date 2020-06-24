@@ -9,7 +9,9 @@ param(
     [Parameter(mandatory=$true)]
     [string]$Labname = "DetectionLab"
 )
-#
+
+$Base_Dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+
 # Defining the Lab
 New-LabDefinition -Name $Labname -DefaultVirtualizationEngine HyperV
 
@@ -23,11 +25,11 @@ Add-LabVirtualNetworkDefinition -Name 'Internet' -HyperVProperties @{ SwitchType
 
 # Domain Controlled definition
 $postInstallActivity_Servers = @()
-$postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Configure-Server.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
-$postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Install-Choco-Apps-Server.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
-$postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Configure-RDP-User-GPO.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab\
-$postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Configure-Local-Admin.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab\
-$postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Set_Audit_Pol_PS_v2_3_4_5.cmd -DependencyFolder $labSources\PostInstallationActivities\DetectionLab\
+$postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Configure-Server.ps1 -DependencyFolder $labSources\PostInstallationActivities\MyLab\
+$postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Install-Choco-Apps-Server.ps1 -DependencyFolder $labSources\PostInstallationActivities\MyLab\
+$postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Configure-RDP-User-GPO.ps1 -DependencyFolder $labSources\PostInstallationActivities\MyLab\
+$postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Configure-Local-Admin.ps1 -DependencyFolder $labSources\PostInstallationActivities\MyLab\
+$postInstallActivity_Servers += Get-LabPostInstallationActivity -ScriptFileName Set_Audit_Pol_PS_v2_3_4_5.cmd -DependencyFolder $labSources\PostInstallationActivities\MyLab\
 Add-LabMachineDefinition -Name DC1 -Memory 1GB -OperatingSystem 'Windows Server 2019 Standard Evaluation (Desktop Experience)' -Roles RootDC -Network $Labname -DomainName lab.local -IpAddress 192.168.11.1 -PostInstallationActivity  $postInstallActivity_Servers
 
 # Server definition used as a routerh to the internet
@@ -38,12 +40,11 @@ Add-LabMachineDefinition -Name Router1 -Memory 1GB -OperatingSystem 'Windows Ser
 
 # Client definitions
 $postInstallActivity_Clients = @()
-$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Remove-OneDrive.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
-$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Remove-Default-Apps.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
-$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Remove-Default-Apps.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
-$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Install-Choco-Apps.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
-$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Set_Audit_Pol_PS_v2_3_4_5.cmd -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
-$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Install-Winlogbeat.ps1 -DependencyFolder $labSources\PostInstallationActivities\DetectionLab
+$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Remove-OneDrive.ps1 -DependencyFolder $labSources\PostInstallationActivities\MyLab\
+$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Remove-Default-Apps.ps1 -DependencyFolder $labSources\PostInstallationActivities\MyLab\
+$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Remove-Default-Apps.ps1 -DependencyFolder $labSources\PostInstallationActivities\MyLab\
+$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Install-Choco-Apps.ps1 -DependencyFolder $labSources\PostInstallationActivities\MyLab\
+$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Set_Audit_Pol_PS_v2_3_4_5.cmd -DependencyFolder $labSources\PostInstallationActivities\MyLab\
 Add-LabMachineDefinition -Name Client1 -Memory 2GB -Network $Labname -OperatingSystem 'Windows 10 Enterprise Evaluation' -Roles Office2013 -DomainName lab.local -IpAddress 192.168.11.101 -PostInstallationActivity $postInstallActivity_Clients
 
 # Aditinal resources for the Client Inastallation
@@ -55,8 +56,11 @@ Install-Lab
 #Disabling of Lab Auto Logon
 Disable-LabAutoLogon
 
+# Install WinlogBeat on Client1
+Invoke-LabCommand -ActivityName 'Install WinlogBeat' -FilePath $global:labSources\PostInstallationActivities\MyLab\Install-Winlogbeat.ps1 -ComputerName Client1
+n
 # Copying Powershell module to all computers to facilitate the common tasks
-Copy-LabFileItem -Path "$Base_Dir\Resources\Scripts\Lab-Tools\" -DestinationFolderPath "C:\Program Files\WindowsPowerShell\Modules\" -ComputerName (Get-LabVm).name -Recurse
+Copy-LabFileItem -Path "$Base_Dir\Modules\Lab-Tools\" -DestinationFolderPath "C:\Program Files\WindowsPowerShell\Modules\" -ComputerName (Get-LabVm).name -Recurse
 
 # Taking a Snapshot of all computer
 Checkpoint-LabVM -SnapshotName Baseline -All

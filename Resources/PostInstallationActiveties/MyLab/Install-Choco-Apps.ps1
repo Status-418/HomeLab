@@ -17,7 +17,7 @@ if(-not($testchoco)){
 }
 
 Write-Host "[Windows Installing Apps] Installing utilities..." -ForegroundColor Green
-choco install -y --limit-output --no-progress googlechrome, firefox, 7zip, vscode, git, wireshark 
+choco install -y --limit-output --no-progress googlechrome, firefox, 7zip, vscode, git, wireshark, procexp, procmon
 
 Invoke-WebRequest -Uri https://github.com/microsoft/terminal/releases/download/v1.0.1401.0/Microsoft.WindowsTerminal_1.0.1401.0_8wekyb3d8bbwe.msixbundle -OutFile C:\Windows\Temp\Microsoft-Terminal.msixbundle
 Add-AppPackage -Path C:\Windows\Temp\Microsoft-Terminal.msixbundle
