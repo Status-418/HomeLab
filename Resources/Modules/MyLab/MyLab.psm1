@@ -60,21 +60,21 @@ function Invoke-MyLab {
 
 function New-MyLabISO {
     Write-Host '[ISO Download] Checking if there is a Windows images'
-    if ( -not ( Test-Path 'C:\LabSources\ISOs\Windows 10.iso' )) {
-        Write-Host '[ISO Download] Downloading a Windows 10 imge'
-        Invoke-WebRequest -URI 'https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso' -OutFile 'C:\LabSources\ISOs\Windows 10.iso'
+    if ( -not ( Test-Path 'C:\LabSources\ISOs\Windows 10.iso' -ErrorAction Ignore )) {
+        Write-Host '[ISO Download] Windows 10 Image missing. Dowload it and place it in C:\Labresources\ISOs\Windows 10.iso'
+        Write-Host '[ISO Download] Download from here: https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso'
     } else {
         Write-Host '[ISO Download] No need to download a Windows 10 imge'
     }
 
-    if ( -not ( Test-Path 'C:\LabSources\ISOs\Windows Server 2019.iso' )) {
-        Write-Host '[ISO Download] Downloading a Windows Server 2019 imge'
-        Invoke-WebRequest -URI 'https://software-download.microsoft.com/download/pr/17763.737.190906-2324.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us_1.iso' -OutFile 'C:\LabSources\ISOs\Windows Server 2019.iso'
+    if ( -not ( Test-Path 'C:\LabSources\ISOs\Windows Server 2019.iso' -ErrorAction Ignore )) {
+        Write-Host '[ISO Download] Windows SErver 2019 Image missing. Dowload it and place it in C:\Labresources\ISOs\Windows Server 2019.iso'
+        Write-Host '[ISO Download] Download from here: https://software-download.microsoft.com/download/pr/17763.737.190906-2324.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us_1.iso'
     } else {
         Write-Host '[ISO Download] No need to download a Windows Server 2019 imge'
     }
 
-    if ( -not ( Test-Path 'C:\LabSources\Software\Office 2013.iso' )) {
+    if ( -not ( Test-Path 'C:\LabSources\Software\Office 2013.iso' -ErrorAction Ignore )) {
         Write-Host '[ISO Download] Please Download an Office iso manually to the Software folder'
     } else {
         Write-Host '[ISO Download] No need to download a Office 2013 imge'
