@@ -44,7 +44,7 @@ $postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName 
 $postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Remove-Default-Apps.ps1 -DependencyFolder $labSources\PostInstallationActivities\MyLab\
 $postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Remove-Default-Apps.ps1 -DependencyFolder $labSources\PostInstallationActivities\MyLab\
 $postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Install-Choco-Apps.ps1 -DependencyFolder $labSources\PostInstallationActivities\MyLab\
-#$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Set_Audit_Pol_PS_v2_3_4_5.cmd -DependencyFolder $labSources\PostInstallationActivities\MyLab\
+$postInstallActivity_Clients += Get-LabPostInstallationActivity -ScriptFileName Set_Audit_Pol_PS_v2_3_4_5.cmd -DependencyFolder $labSources\PostInstallationActivities\MyLab\
 Add-LabMachineDefinition -Name Client1 -Memory 2GB -Network $Labname -OperatingSystem 'Windows 10 Enterprise Evaluation' -Roles Office2013 -DomainName lab.local -IpAddress 192.168.11.101 -PostInstallationActivity $postInstallActivity_Clients
 
 # Aditinal resources for the Client Inastallation
@@ -57,9 +57,10 @@ Install-Lab
 Disable-LabAutoLogon
 
 # Install Splunk
-#Copy-LabFileItem -Path C:\Users\tom\HomeLab\Resources\Splunk\splunk-add-on-for-microsoft-windows_800.tgz -DestinationFolderPath C:\Windows\Temp -ComputerName Router1
-#Invoke-LabCommand -ActivityName Instal-Splunk-Forwarder -FilePath C:\Users\tom\HomeLab\Resources\PostInstallationActiveties\MyLab\Install-Splunk-Server.ps1 -ComputerName Router1
-#Invoke-LabCommand -ActivityName Instal-Splunk-Forwarder -FilePath C:\Users\tom\HomeLab\Resources\PostInstallationActiveties\MyLab\Install-Splunk-Forwarder.ps1 -ComputerName Client1
+Copy-LabFileItem -Path C:\Users\tom\HomeLab\Resources\Splunk\splunk-add-on-for-microsoft-windows_800.tgz -DestinationFolderPath C:\Windows\Temp -ComputerName Router1
+Invoke-LabCommand -ActivityName Instal-Splunk-Forwarder -FilePath C:\Users\tom\HomeLab\Resources\PostInstallationActiveties\MyLab\Install-Splunk-Server.ps1 -ComputerName Router1
+Restart-LabVm -ComputerName Router1
+Invoke-LabCommand -ActivityName Instal-Splunk-Forwarder -FilePath C:\Users\tom\HomeLab\Resources\PostInstallationActiveties\MyLab\Install-Splunk-Forwarder.ps1 -ComputerName Client1
 
 # Copying Powershell module to all computers to facilitate the common tasks
 Copy-LabFileItem -Path "$Base_Dir\Modules\Lab-Tools\" -DestinationFolderPath "C:\Program Files\WindowsPowerShell\Modules\" -ComputerName (Get-LabVm).name -Recurse
@@ -72,7 +73,7 @@ Start-LabVm -All -Wait
 # Commands used to install an applicaion post install on all computers quitetly
 #$packs = @()
 #$packs += Get-LabSoftwarePackage -Path $labSources\Software\kolide-launcher.msi -CommandLine -quiet
-#Install-LabSoftwarePackages -Machine (Get-LabVM -All) -SoftwarePackage $packs
+#Install-LabSoftwarePackages -Machine Client1 -SoftwarePackage $packs
 
 # Displaying Lab Deployment Summary
 Show-LabDeploymentSummary -Detailed
