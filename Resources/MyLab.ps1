@@ -57,9 +57,9 @@ Install-Lab
 Disable-LabAutoLogon
 
 # Install Splunk
-Copy-LabFileItem -Path C:\Users\tom\HomeLab\Resources\Splunk\splunk-add-on-for-microsoft-windows_800.tgz -DestinationFolderPath C:\Windows\Temp -ComputerName Router1
-Invoke-LabCommand -ActivityName Instal-Splunk-Forwarder -FilePath C:\Users\tom\HomeLab\Resources\PostInstallationActiveties\MyLab\Install-Splunk-Server.ps1 -ComputerName Router1
-Invoke-LabCommand -ActivityName Instal-Splunk-Forwarder -FilePath C:\Users\tom\HomeLab\Resources\PostInstallationActiveties\MyLab\Install-Splunk-Forwarder.ps1 -ComputerName Client1
+#Copy-LabFileItem -Path C:\Users\tom\HomeLab\Resources\Splunk\splunk-add-on-for-microsoft-windows_800.tgz -DestinationFolderPath C:\Windows\Temp -ComputerName Router1
+#Invoke-LabCommand -ActivityName Instal-Splunk-Forwarder -FilePath C:\Users\tom\HomeLab\Resources\PostInstallationActiveties\MyLab\Install-Splunk-Server.ps1 -ComputerName Router1
+#Invoke-LabCommand -ActivityName Instal-Splunk-Forwarder -FilePath C:\Users\tom\HomeLab\Resources\PostInstallationActiveties\MyLab\Install-Splunk-Forwarder.ps1 -ComputerName Client1
 
 # Copying Powershell module to all computers to facilitate the common tasks
 Copy-LabFileItem -Path "$Base_Dir\Modules\Lab-Tools\" -DestinationFolderPath "C:\Program Files\WindowsPowerShell\Modules\" -ComputerName (Get-LabVm).name -Recurse
