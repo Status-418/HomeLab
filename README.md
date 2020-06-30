@@ -28,7 +28,8 @@ Restart-Comput
 ```
 2. After restarting opne Hyper-V and create a virtual switch named 'Internet' and assigne it an adapter that can communicate with the internet
 3. If you do not habe an ISO for Windows 10 and Windows Server 2019 you can run `New-MyLabISO` to get details on how to obtain the required ISOs.
-    Once downloaded pace them in the folder `C:\LabSources\ISOs\` and name them `Windows 10.iso` and `Windows Server 2019.iso` respectivly.
+Once downloaded pace them in the folder `C:\LabSources\ISOs\` and name them `Windows 10.iso` and `Windows Server 2019.iso` respectivly. 
+- An `Office 2013.iso` file needs to be placed in `C:\LabSources\Software`
 ```
 Import-Module -name MyLab
 Invoke-MyLab
