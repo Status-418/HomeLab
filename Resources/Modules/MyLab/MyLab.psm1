@@ -36,6 +36,14 @@ function Invoke-MyLab {
         Write-Host '[Build] Please Run this with elevated priveleges' -ForegroundColor Red
         Break
     }
+
+    Write-Host "[Build] Checking for ISO Files" -ForegroundColor Green
+    if ( -not ( Test-Path C:\LabSources\ISOs\* -Include *.iso ) ) {
+        Write-Host "[Build] Failed to find ISO files in C:\LabSources\ISO\. Please add ISO files for more info run New-LabISO" -ForegroundColor Red
+        Break
+    }
+
+
     Write-Host "[Build] Installing AutomatedLab" -ForegroundColor Green
     Install-PackageProvider Nuget -Force
     if ( -not ( Get-Module -ListAvailable -Name AutomatedLab )) {
@@ -45,11 +53,7 @@ function Invoke-MyLab {
     Write-Host "[Build] Disabling Telemetry" -ForegroundColor Green
     Disable-LabTelemetry -Force -Confirm
 
-    Write-Host "[Build] Checking for ISO Files" -ForegroundColor Green
-    if ( -not ( Test-Path C:\LabSources\ISOs\* -Include *.iso ) ) {
-        Write-Host "[Build] Failed to find ISO files in C:\LabSources\ISO\. Please add ISO files." -ForegroundColor Red
-        Break
-    }
+    
 
     Write-Host "[Build] Setting up the lab environment" -ForegroundColor Green
     New-LabDefinition -Name MyLab -DefaultVirtualizationEngine HyperV -vmPath C:\MyLab\VMs
@@ -59,25 +63,25 @@ function Invoke-MyLab {
 }
 
 function New-MyLabISO {
-    Write-Host '[ISO Download] Checking if there is a Windows images'
+    Write-Host '[ISO Download] Checking if there is a Windows images' -ForegroundColor Green
     if ( -not ( Test-Path 'C:\LabSources\ISOs\Windows 10.iso' -ErrorAction Ignore )) {
-        Write-Host '[ISO Download] Windows 10 Image missing. Dowload it and place it in C:\Labresources\ISOs\Windows 10.iso'
-        Write-Host '[ISO Download] Download from here: https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso'
+        Write-Host '[ISO Download] Windows 10 Image missing. Dowload it and place it in C:\Labresources\ISOs\Windows 10.iso' -ForegroundColor Red
+        Write-Host '[ISO Download] Download from here: https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso' -ForegroundColor Yellow
     } else {
-        Write-Host '[ISO Download] No need to download a Windows 10 imge'
+        Write-Host '[ISO Download] No need to download a Windows 10 imge' -ForegroundColor Green
     }
 
     if ( -not ( Test-Path 'C:\LabSources\ISOs\Windows Server 2019.iso' -ErrorAction Ignore )) {
-        Write-Host '[ISO Download] Windows SErver 2019 Image missing. Dowload it and place it in C:\Labresources\ISOs\Windows Server 2019.iso'
-        Write-Host '[ISO Download] Download from here: https://software-download.microsoft.com/download/pr/17763.737.190906-2324.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us_1.iso'
+        Write-Host '[ISO Download] Windows SErver 2019 Image missing. Dowload it and place it in C:\Labresources\ISOs\Windows Server 2019.iso'  -ForegroundColor Red
+        Write-Host '[ISO Download] Download from here: https://software-download.microsoft.com/download/pr/17763.737.190906-2324.rs5_release_svc_refresh_SERVER_EVAL_x64FRE_en-us_1.iso'  -ForegroundColor Yellow
     } else {
-        Write-Host '[ISO Download] No need to download a Windows Server 2019 imge'
+        Write-Host '[ISO Download] No need to download a Windows Server 2019 imge' -ForegroundColor Green
     }
 
     if ( -not ( Test-Path 'C:\LabSources\Software\Office 2013.iso' -ErrorAction Ignore )) {
-        Write-Host '[ISO Download] Please Download an Office iso manually to the Software folder'
+        Write-Host '[ISO Download] Please Download an Office iso manually to the Software folder' -ForegroundColor Red
     } else {
-        Write-Host '[ISO Download] No need to download a Office 2013 imge'
+        Write-Host '[ISO Download] No need to download a Office 2013 imge' -ForegroundColor Green
     }
 
 }
